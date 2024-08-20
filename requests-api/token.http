@@ -1,0 +1,46 @@
+GET http://localhost:8088/api/v1/security/csrf_token/
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzI0MTA0ODQ5LCJqdGkiOiI3OTZkMWU5NC01ZWU2LTQ1YzYtODAxNC1iNzM4YmY1NzU0ODMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoxLCJuYmYiOjE3MjQxMDQ4NDksImV4cCI6MTcyNDEwNTc0OX0.esFOI9a9DHgvVGByqkdOvpg0xCE3C9YM_AjycKoKdRM
+###
+POST http://localhost:8088/api/v1/security/login
+Content-Type: application/json
+
+{
+  "password": "admin",
+  "provider": "db",
+  "refresh": true,
+  "username": "admin"
+}
+
+###
+POST http://localhost:8088/api/v1/security/guest_token
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzI0MTA0ODE4LCJqdGkiOiJjMjI5MmM0Yi02ZWZmLTRhMjktYWEzZS1jN2FlYWFmNTJmNDciLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoxLCJuYmYiOjE3MjQxMDQ4MTgsImV4cCI6MTcyNDEwNTcxOH0.ymCJL-bw4F0j5B5d0476Tz21W7Hf_oIMqBceYpUTLDs
+
+{
+  "resources": [
+    {
+      "type": "dashboard",
+      "id": "5f10678e-7f6b-48d0-8be5-735ab61db53f"
+    }
+  ],
+  "rls": [],
+  "user": {
+    "username": "report-viewer",
+    "first_name": "report-viewer",
+    "last_name": "report-viewer"
+  }
+}
+
+
+###
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzI0MTA0Mzk5LCJqdGkiOiJhYWNhZGYxYi0zZWNmLTQwM2UtYWU1NS0wMDRmOWM1MGJmZmUiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoxLCJuYmYiOjE3MjQxMDQzOTksImV4cCI6MTcyNDEwNTI5OX0.9_jnQsEAoZdl68DyAlmxfNKbphACiMtKZy5WM-756RM" -d '{"user": {"username": "guest"}, "rls": [], "resources": [{"type": "dashboard", "id": "5f10678e-7f6b-48d0-8be5-735ab61db53f"}]}' http://localhost:8088/api/v1/security/guest_token/
+
+
+
+###
+curl -c cookies.txt -X GET http://localhost:8088/api/v1/security/csrf_token/
+
+###
+GET http://localhost:8088/api/v1/dashboard/5f10678e-7f6b-48d0-8be5-735ab61db53f/embedded
+Authorization: Bearer IjVkNTNlYWRhMjM4YjliNjdlZGQwYjlhYjIxODE3N2Y4NDlhZDQ2Nzgi.ZsPAnA.Q2PuzmVN21-pRTNsC0YA6AxlNN0
+

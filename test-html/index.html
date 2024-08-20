@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Superset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 800px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        #loading {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard-container">
+        <div id="loading">Cargando dashboard...</div>
+    </div>
+
+    <script>
+        const supersetUrl = 'http://localhost:8088';
+        const dashboardId = 'DZYag2D7O63';
+
+        http://localhost:8088/superset/dashboard/p/DZYag2D7O63/
+
+        async function loadDashboard() {
+            try {
+                // Autenticación con Superset
+                const response = await fetch(`${supersetUrl}/api/v1/security/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin'
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Fallo en la autenticación');
+                }
+
+                const data = await response.json();
+                const token = data.access_token;
+
+                // Crear y cargar el iframe
+                const iframe = document.createElement('iframe');
+                iframe.src = `${supersetUrl}/superset/dashboard/p/${dashboardId}/?standalone=true`;
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.frameBorder = '0';
+                iframe.onload = () => {
+                    // Inyectar el token en el iframe si es necesario
+                    iframe.contentWindow.postMessage({ type: 'token', token: token }, supersetUrl);
+                };
+
+                const container = document.getElementById('dashboard-container');
+                container.innerHTML = ''; // Limpiar el contenedor
+                container.appendChild(iframe);
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').innerText = 'Error al cargar el dashboard';
+            }
+        }
+
+        // Cargar el dashboard cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
